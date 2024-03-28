@@ -1,8 +1,9 @@
-import { createBrowserRouter } from "react-router-dom"
-import LogInPage from './pages/LogInPage';
+import { createBrowserRouter, } from "react-router-dom"
 import App from "./App";
+import LogInPage from './pages/LogInPage';
 import HomePage from "./pages/HomePage";
 import ConfirmationPage from './pages/ConfirmationPage.jsx';
+import ApprovalStatusPage from "./pages/ApprovalStatusPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -11,11 +12,15 @@ const router = createBrowserRouter([
       children: [
         {
           path: "/",
-          element: <HomePage/>
+          element: <HomePage />
         },
         {
-          path: "/",
-          element: <ConfirmationPage/>
+          path: "/Confirmation",
+          element: <ConfirmationPage />
+        },
+        {
+          path: "/Status",
+          element: <ApprovalStatusPage />
         },  
         
         {
