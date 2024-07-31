@@ -37,7 +37,7 @@ import { CiLogout } from "react-icons/ci";
 const Navbar = () => {
   const [isAvatarDropdownOpen, setIsAvatarDropdownOpen] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false);
-  const {user} = useAuth();
+  const {user, isAuthenticated} = useAuth();
   console.log (user, "username");
   
   const toggleAvatarDropdown = () => {
@@ -54,6 +54,9 @@ const Navbar = () => {
     <header className="top-0 left-0 right-0 h-[80px] bg-white shadow-lg z-20 fixed">
       <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link to="/"><img className="w-[65px]" src={carPro} alt="CarPro Logo" /></Link>
+        {!isAuthenticated && <Link to="/login" className="flex items-center ml-8git px-4 py-2 text-gray-800 hover:bg-gray-100 font-bold">
+                  Log In
+                </Link>}
         <div className="flex items-center space-x-6">
         <div className='font-bold text-gray-900'>
             {user && "Hello " + user.username}
@@ -71,6 +74,7 @@ const Navbar = () => {
               </div>
             )}
           </div>
+
           
           <div className="relative">
             <RxAvatar 
