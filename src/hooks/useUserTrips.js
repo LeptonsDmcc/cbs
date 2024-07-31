@@ -1,14 +1,15 @@
 import { useState ,useEffect} from "react";
 import baseURL from "../services/apiClient";
 
-const useTrips = (page) => {
+const useUserTrips = (userId) => {
     const [data, setData] = useState();
     const [isLoading, setIsLoading] = useState(false);
+
 
     useEffect(() => {
         setIsLoading(true)
      const fetchTrips = async () => {
-       const res = await fetch(`${baseURL}/api/v1/trips/?page=${page||1}`)
+       const res = await fetch(`${baseURL}/api/v1/trips/?staff=${userId}`)
        if (res.ok) { 
         const data = await res.json();
         console.log("Bookings: ", data)
@@ -23,10 +24,10 @@ const useTrips = (page) => {
      fetchTrips()
      setIsLoading(false)
      
-    },[page])
+    },[])
 
     return {data, isLoading}
 
 }
 
-export default useTrips
+export default useUserTrips

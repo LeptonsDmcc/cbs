@@ -53,7 +53,7 @@ const Navbar = () => {
   return (
     <header className="top-0 left-0 right-0 h-[80px] bg-white shadow-lg z-20 fixed">
       <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <img className="w-[65px]" src={carPro} alt="CarPro Logo" />
+        <Link to="/"><img className="w-[65px]" src={carPro} alt="CarPro Logo" /></Link>
         <div className="flex items-center space-x-6">
         <div className='font-bold text-gray-900'>
             {user && "Hello " + user.username}

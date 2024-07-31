@@ -2,7 +2,7 @@ import Admin from "../pages/Dashboard/Admin"
 import Cars from "../pages/Dashboard/Cars/Cars";
 import Dashboard from "../pages/Dashboard/Dashboard"
 import Users from "../pages/Dashboard/Users/Users";
-import Bookings from "../pages/Dashboard/Bookings";
+import Bookings from "../pages/Dashboard/Bookings/Bookings";
 import Tracking from "../pages/Dashboard/Tracking";
 import NewCar from "../pages/Dashboard/Cars/NewCar";
 import AddUser from "../pages/Dashboard/Users/AddUser";
@@ -11,6 +11,7 @@ import UserDetails from "../pages/Dashboard/Users/UserDetails";
 import EditUser from "../pages/Dashboard/Users/EditUser";
 import EditCar from "../pages/Dashboard/Cars/EditCar";
 import AdminLogin from "../pages/Dashboard/AdminLogin";
+import BookingRequests from "../pages/Dashboard/Bookings/BookingRequests";
 
 const adminRoutes  = {
     path:"admin",
@@ -59,6 +60,10 @@ const adminRoutes  = {
       {
         path:"bookings",
         element: <Bookings />
+      },
+      {
+        path:"bookings/:tripId",
+        element: <BookingRequests />
       },
       {
         path:"tracking",

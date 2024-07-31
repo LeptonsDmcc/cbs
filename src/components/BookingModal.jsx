@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 const BookingModal = ({ isOpen, onClose, bookingDetails, onStartTrip, onEndTrip }) => {
-    if (!isOpen) return null;
+    // if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">

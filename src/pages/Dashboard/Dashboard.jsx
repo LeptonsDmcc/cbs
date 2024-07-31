@@ -267,26 +267,23 @@
 
 // export default Dashboard;
 
-import { useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import UsersCard from '../../components/UsersCard';  // Adjust the import path accordingly
 import CarsCard from '../../components/CarsCard';  // Adjust the import path accordingly
-import { BookingContext } from '../../context/BookingContext';
-import BookingRequestModal from '../../components/BookingRequestModal';
+import BookingsCard from '../../components/BookingsCard'; // Import the new component
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Dashboard = () => {
-  const { requests, updateRequestStatus, fetchRequests, modalOpen, setModalOpen, selectedRequest } = useContext(BookingContext);
   const [carsCount, setCarsCount] = useState(0);
   const [usersCount, setUsersCount] = useState(0);
-  const [bookingsCount, setBookingsCount] = useState(0);
+  const [tripsCount, setTripsCount] = useState(0);
 
   useEffect(() => {
-    fetchRequests();
     fetchCounts();
-  }, [fetchRequests]);
+  }, []);
 
   const fetchCounts = async () => {
     try {
@@ -298,20 +295,11 @@ const Dashboard = () => {
       const usersData = await usersResponse.json();
       setUsersCount(usersData.count);
 
-      const bookingsResponse = await fetch('/api/v1/trips/');
-      const bookingsData = await bookingsResponse.json();
-      setBookingsCount(bookingsData.count);
+      const tripsResponse = await fetch('/api/v1/trips/');
+      const tripsData = await tripsResponse.json();
+      setTripsCount(tripsData.results.length);
     } catch (error) {
       console.error('Error fetching counts:', error);
-    }
-  };
-
-  const handleUpdate = async (updatedRequest) => {
-    try {
-      await updateRequestStatus(updatedRequest.id, updatedRequest.status);
-      setModalOpen(false);
-    } catch (error) {
-      console.error('Error updating request status:', error);
     }
   };
 
@@ -334,27 +322,6 @@ const Dashboard = () => {
         <p className="text-4xl">Dashboard</p>
       </div>
 
-      {/* Approval Requests */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {requests.map((request, index) => (
-          <div key={index} className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-lg overflow-hidden shadow-xl p-4">
-            <h2 className="text-lg font-semibold mb-2 text-gray-800">Approval Request</h2>
-            <p className="text-sm mb-4 text-gray-800">Mission: {request.mission}</p>
-            <div className="flex justify-end space-x-4">
-              <button 
-                className="duration-300 bg-black/0 hover:bg-black/25 text-green-400 font-bold py-2 px-4 rounded"
-                onClick={() => {
-                  setSelectedRequest(request);
-                  setModalOpen(true);
-                }}
-              >
-                View
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
       {/* Summaries */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
@@ -366,15 +333,19 @@ const Dashboard = () => {
           <p className="text-2xl font-extrabold text-[#a8cf45]">{usersCount}</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-          <h2 className="text-xl font-semibold mb-2 text-gray-800">Bookings</h2>
-          <p className="text-2xl font-extrabold text-[#a8cf45]">{bookingsCount}</p>
+          <h2 className="text-xl font-semibold mb-2 text-gray-800">Trips</h2>
+          <p className="text-2xl font-extrabold text-[#a8cf45]">{tripsCount}</p>
         </div>
       </div>
+      <div className="grid w-full">
+      <BookingsCard /> 
+      </div >
 
-      {/* Users and Cars Cards */}
+      {/* Users, Cars, and Latest Bookings Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <UsersCard />
         <CarsCard />
+        
       </div>
 
       {/* Bookings Chart */}
@@ -382,23 +353,8 @@ const Dashboard = () => {
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Bookings Overview</h2>
         <Bar data={bookingsData} />
       </div>
-
-      {modalOpen && selectedRequest && (
-        <BookingRequestModal
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          bookingRequest={selectedRequest}
-          handleUpdate={handleUpdate}
-        />
-      )}
     </div>
   );
-}
+};
 
 export default Dashboard;
-
-
-
-
-
-
