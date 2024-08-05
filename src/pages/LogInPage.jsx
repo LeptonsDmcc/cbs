@@ -98,6 +98,7 @@ import { useNavigate } from 'react-router-dom';
 import carPro from '../assets/images/carpro.png';
 import marigold from '../assets/images/marigold.png'; // Importing the background image
 import useAuth from '../hooks/auth/store';
+import { Link } from 'react-router-dom';
 
 const LogInPage = () => {
   const [email, setEmail] = useState('');
@@ -196,6 +197,9 @@ const LogInPage = () => {
               >
                 Forgot your password?
               </a>
+            </div>
+            <div className="text-center mt-4">
+            <Link to={"/admin/login"} className='text-sm text-blue-500 hover:underline'>Log In As Admin</Link>
             </div>
           </form>
         </div>

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import carPro from '../../assets/images/carpro.png';
+import marigold from '../../assets/images/marigold.png'; // Importing the background image
 import useAuth from '../../hooks/auth/store';
+import { Link } from 'react-router-dom';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -23,11 +25,14 @@ const AdminLogin = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-100 to-gray-300">
+    <div
+      className="flex items-center justify-center min-h-screen"
+      style={{ backgroundImage: `url(${marigold})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+    >
       <div className="bg-white shadow-2xl rounded-2xl transform transition-transform duration-500 hover:scale-105 flex flex-col md:flex-row w-full max-w-4xl">
         <div className="w-full md:w-1/2 p-8">
           <div className="text-center mb-8">
-            <h2 className="text-4xl font-extrabold text-gray-800">Log In</h2>
+            <h2 className="text-4xl font-extrabold text-gray-800">Admin Log In</h2>
           </div>
           <form onSubmit={handleLogin}>
             <div className="mb-6">
@@ -97,6 +102,9 @@ const AdminLogin = () => {
               >
                 Forgot your password?
               </a>
+            </div>
+            <div className="text-center mt-4">
+              <Link to="/login" className="text-sm text-blue-500 hover:underline">Log In as User</Link>
             </div>
           </form>
         </div>

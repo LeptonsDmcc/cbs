@@ -129,7 +129,7 @@ const UserBookings = () => {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth(); 
+  const { user } = useAuth();
   const { data } = useUserTrips(user.id);
 
   useEffect(() => {
@@ -162,11 +162,10 @@ const UserBookings = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-gray-100 p-6 m-16">
-
+    <div className="relative min-h-screen bg-gray-100 p-2 px-4 pt-12">
       {/* Header */}
-      <div className="shadow-lg flex items-center justify-between h-[72px] bg-gray-800 text-white font-semibold px-6 mb-6 rounded-lg">
-        <p className="text-4xl">My Bookings</p>
+      <div className="shadow-lg flex items-center justify-between h-[72px] bg-gray-800 text-white font-semibold px-6 mb-6 mt-10 rounded-lg">
+        <p className="text-2xl lg:text-4xl">My Bookings</p>
       </div>
 
       {/* Main Content */}

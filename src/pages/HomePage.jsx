@@ -446,7 +446,6 @@ import { BookingContext } from '../context/BookingContext';
 import SubmissionModal from '../components/SubmissionModal';
 import useAuth from '../hooks/auth/store';
 
-
 const HomePage = () => {
   const { data, isLoading } = useVehicles();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -455,7 +454,6 @@ const HomePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submittedData, setSubmittedData] = useState(null);
   const { user } = useAuth();
-  
 
   const onSubmit = async (data) => {
     const newData = {
@@ -497,9 +495,9 @@ const HomePage = () => {
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mb-6">
-      <div className="flex justify-center gap-x-[80px] px-5 mt-24 text-bold">
-        <ul className='font-bold mx-8'>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mb-6 px-4">
+      <div className="flex flex-col lg:flex-row justify-center lg:gap-x-[80px] mt-24 text-bold">
+        <ul className='font-bold mx-8 mb-6 lg:mb-0'>
           {data && data.results && data.results.map((vehicle, index) => {
             return (
               <li onClick={() => {
@@ -514,7 +512,7 @@ const HomePage = () => {
           })}
         </ul>
 
-        <div className="w-1/2">
+        <div className="w-full lg:w-1/2 mb-6 lg:mb-0">
           {data && data.results && <img src={data.results[activeIndex].image || peugeot} alt="" className="w-full rounded-lg shadow-lg" />}
         </div>
 
@@ -554,9 +552,9 @@ const HomePage = () => {
         </ul>
       </div>
 
-      <div className="w-[60%] bg-[#dbded4] mx-auto mt-6 mb-[40px] p-6 rounded-lg shadow-xl transform hover:scale-105 transition duration-300 ease-in-out">
+      <div className="w-full lg:w-[60%] bg-[#dbded4] mx-auto mt-6 mb-[40px] p-6 rounded-lg shadow-xl transform hover:scale-105 transition duration-300 ease-in-out">
         <div>
-          <div className="mb-4 flex gap-6 items-center">
+          <div className="mb-4 flex flex-col sm:flex-row lg:flex-row gap-6 items-center">
             <div className="flex-grow">
               <label htmlFor="date" className="block text-sm font-medium text-gray-700"> Date </label>
               <input {...register("date")} type="date" id="date" name="date" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-gray-600" />
@@ -606,5 +604,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
