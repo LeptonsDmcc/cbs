@@ -16,6 +16,10 @@ const router = createBrowserRouter([
       children: [
         {
           path: "/",
+          element: <LogInPage />
+        },
+        {
+          path: "/home",
           element: <HomePage />
         },
         {
@@ -34,11 +38,6 @@ const router = createBrowserRouter([
           path: "/profile",
           element: <Profile />
         }, 
-        
-        {
-            path: "/login",
-            element: <LogInPage />
-          },
           adminRoutes
       ]
     },

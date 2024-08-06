@@ -4,9 +4,9 @@ const Admin = () => {
   const location = useLocation()
   return (
     <section className="flex bg-gradient-to-br from-green-200 via-[#a8cf45] to-green-400">
-    <aside className="h-screen w-[20%] bg-gray-100">
-      {(location.pathname !== "/admin/login") &&<Sidebar />}
-    </aside>
+   {(location.pathname !== "/admin/login") && <aside className="h-screen w-[20%] bg-gray-100">
+      <Sidebar />
+    </aside>}
     <main className="w-[80%]">
       <section className="mt-20"><Outlet /></section>
     </main>
