@@ -8,7 +8,7 @@ const App = () => {
 
   return (
     <BookingProvider>
-      {(location.pathname !== "/login" && location.pathname !== "/admin/login") && <Navbar />}
+      {(location.pathname !== "/" && location.pathname !== "/admin/login") && <Navbar />}
       <Outlet />      
     </BookingProvider>
   );
