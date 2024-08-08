@@ -450,7 +450,7 @@ const HomePage = () => {
   const { data, isLoading } = useVehicles();
   const [activeIndex, setActiveIndex] = useState(0);
   const { handleSubmit, register } = useForm();
-  const { addRequest, setModalOpen, setSelectedRequest } = useContext(BookingContext);
+  const { addRequest, setSelectedRequest } = useContext(BookingContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submittedData, setSubmittedData] = useState(null);
   const { user } = useAuth();

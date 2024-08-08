@@ -2,12 +2,16 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoArrowBackCircleOutline } from "react-icons/io5";
 import baseURL from '../../../services/apiClient';
+import useAuth from '../../../hooks/auth/store';
+import Spinner from '../../../components/Spinner';
 
 const UserDetails = () => {
   const { staffId } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [staff, setStaff] = useState();
+  const { user } = useAuth();
+
 
   // useEffect(() => {
   //   const fetchUserDetails = async () => {
@@ -28,7 +32,7 @@ const UserDetails = () => {
   useEffect(() => {
     setIsLoading(true)
      const fetchStaff = async () => {
-       const res = await fetch(`${baseURL}/api/v1/staff/${staffId}/`)
+       const res = await fetch(`${baseURL}/api/v1/manage/staff/${staffId}/`)
        if (res.ok) { 
         const data = await res.json();
         // console.log("Staff: ", data)
@@ -46,7 +50,11 @@ const UserDetails = () => {
   };
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner />
+      </div>
+    );
   }
 
   if (!staff) {

@@ -8,19 +8,18 @@ import { Link } from 'react-router-dom';
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUserName] = useState('');
   const navigate = useNavigate();
 
   const { error, signIn, isAuthenticated, isAuthenticating } = useAuth();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    signIn(email, username, password, () => {});
+    signIn(email, password, () => {});
   };
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/admin');
+      navigate('/admin/dashboard/');
     }
   }, [isAuthenticated, navigate]);
 
@@ -49,23 +48,6 @@ const AdminLogin = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="mb-6">
-              <label
-                htmlFor="username"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Username
-              </label>
-              <input
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500"
-                id="username"
-                placeholder="Username"
-                type="text"
-                value={username}
-                onChange={(e) => setUserName(e.target.value)}
                 required
               />
             </div>

@@ -197,7 +197,7 @@ const Cars = () => {
                   <tr key={vehicle.url} className="bg-gray-100 h-[65px] text-gray-700 border-b hover:bg-gray-50 transition-colors">
                     <td className="pl-6">{vehicle.make}</td>
                     <td>{vehicle.model}</td>
-                    <td>{(vehicle.department).split('-')[4].toUpperCase()}</td>
+                    <DepartmentName departmentId={(vehicle.department)}/>
                     <td className="flex gap-2 pr-6">
                       <button
                         onClick={() => handleEdit((vehicle.id))}
@@ -257,6 +257,44 @@ const Cars = () => {
 };
 
 export default Cars;
+const DepartmentName = ({ departmentId }) => {
+  const [department, setDepartment] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDepartment = async () => {
+      try {
+        const response = await fetch(`${baseURL}/api/v1/departments/${departmentId}/`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch department');
+        }
+        const departmentData = await response.json();
+        setDepartment(departmentData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (departmentId) {
+      fetchDepartment();
+    }
+  }, [departmentId]);
+
+  if (loading) {
+    return <td>Loading...</td>;
+  }
+
+  if (error) {
+    return <td>Error loading department</td>;
+  }
+
+  return (
+    <td>{department ? department.name : 'No Department'}</td>
+  );
+};
 // import { useState, useEffect } from 'react';
 // import { Link, useNavigate } from 'react-router-dom';
 // import { IoMdAdd } from 'react-icons/io';

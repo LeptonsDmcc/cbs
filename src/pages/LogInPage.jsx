@@ -103,14 +103,36 @@ import { Link } from 'react-router-dom';
 const LogInPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUserName] = useState('');
+  const [loginError, setLoginError] = useState('');
+
   const navigate = useNavigate();
 
   const { error, signIn, isAuthenticated, isAuthenticating } = useAuth();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    signIn(email, username, password, () => {});
+    console.log("Password", password);
+    console.log("Email", email);
+    
+    try {
+      await signIn(email, password, (err) => {
+        console.log(`ERROR ${err}`)
+        if (err) {
+          if (err.includes ('credentials')) {
+            setLoginError('Incorrect Email or Password ');
+          } else if (err === 'Incorrect password') {
+            setLoginError('You have inputted the wrong password');
+          } else {
+            setLoginError(err);
+          }
+        } else {
+          setLoginError('');
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      setLoginError('An unexpected error occurred');
+    }
   };
 
   useEffect(() => {
@@ -149,23 +171,6 @@ const LogInPage = () => {
             </div>
             <div className="mb-6">
               <label
-                htmlFor="username"
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
-                Username
-              </label>
-              <input
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500"
-                id="username"
-                placeholder="Username"
-                type="text"
-                value={username}
-                onChange={(e) => setUserName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="mb-6">
-              <label
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
@@ -181,6 +186,7 @@ const LogInPage = () => {
                 required
               />
             </div>
+            {loginError && <p className="text-red-500 text-sm mb-4">{loginError}</p>}
             {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
             <div className="flex items-center justify-between">
               <button
@@ -191,15 +197,15 @@ const LogInPage = () => {
               </button>
             </div>
             <div className="text-center mt-4">
-              <a
-                href="/reset-password"
+              <Link
+                to="/reset-password"
                 className="text-sm text-blue-500 hover:underline"
               >
                 Forgot your password?
-              </a>
+              </Link>
             </div>
             <div className="text-center mt-4">
-            <Link to={"/admin/login"} className='text-sm text-blue-500 hover:underline'>Log In As Admin</Link>
+              <Link to="/admin/login" className="text-sm text-blue-500 hover:underline">Log In As Admin</Link>
             </div>
           </form>
         </div>

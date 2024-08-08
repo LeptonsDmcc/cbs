@@ -1,4 +1,3 @@
-// import React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IoArrowBackCircleOutline } from 'react-icons/io5';
@@ -12,20 +11,25 @@ const CarDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
     const fetchVehicle = async () => {
-      const res = await fetch(`${baseURL}/api/v1/vehicles/${vehicleId}/`);
-      if (res.ok) {
-        const data = await res.json();
-        setVehicle(data);
-      } else {
-        console.error('Failed to fetch data:', res.status);
+      setIsLoading(true);
+      try {
+        const res = await fetch(`${baseURL}/api/v1/vehicles/${vehicleId}/`);
+        if (res.ok) {
+          const data = await res.json();
+          setVehicle(data);
+        } else {
+          console.error('Failed to fetch data:', res.status);
+        }
+      } catch (error) {
+        console.error('Error fetching vehicle details:', error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
+
     fetchVehicle();
-    setIsLoading(false) 
-  }, [])
+  }, [vehicleId]);
 
   const handleBackClick = () => {
     navigate('../cars'); // Adjust the path according to your routing setup
@@ -45,7 +49,7 @@ const CarDetails = () => {
         <p className="text-gray-700 text-xl">Car not found</p>
       </div>
     );
-    }
+  }
 
   return (
     <div className="relative min-h-screen p-8">
@@ -68,13 +72,12 @@ const CarDetails = () => {
         <div className="bg-white shadow-lg rounded-lg p-6 lg:w-[60%] mb-8 lg:mb-0">
           <h2 className="text-2xl font-semibold mb-4">Car Information</h2>
           <div className="grid grid-cols-1 gap-4">
-        
             <p><span className="font-semibold">Car Make:</span> {vehicle.make}</p>
             <p><span className="font-semibold">Car Model:</span> {vehicle.model}</p>
             <p><span className="font-semibold">Car Type:</span> {vehicle.vehicle_type}</p>
-            <p><span className="font-semibold">Plate Number:</span> {vehicle.license_number}</p>
-            <p><span className="font-semibold">Department Assigned:</span> {vehicle.department}</p>
-            <p><span className="font-semibold">Driver:</span>{vehicle.driver}</p>
+            <p><span className="font-semibold">Plate Number:</span> {vehicle.license_plate}</p>
+            <DepartmentName departmentId={vehicle.department} />
+            <p><span className="font-semibold">Driver:</span> {vehicle.driver}</p>
           </div>
         </div>
 
@@ -92,3 +95,42 @@ const CarDetails = () => {
 };
 
 export default CarDetails;
+
+const DepartmentName = ({ departmentId }) => {
+  const [department, setDepartment] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDepartment = async () => {
+      try {
+        const response = await fetch(`${baseURL}/api/v1/departments/${departmentId}/`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch department');
+        }
+        const departmentData = await response.json();
+        setDepartment(departmentData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (departmentId) {
+      fetchDepartment();
+    }
+  }, [departmentId]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error loading department</p>;
+  }
+
+  return (
+    <p><span className="font-semibold">Department Assigned:</span> {department.name}</p>
+  );
+};

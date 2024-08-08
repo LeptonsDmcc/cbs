@@ -12,7 +12,7 @@ const useAuth = create((set) => {
   return {
     ...defaultValues,
 
-    signIn: async (email,username, password, cb) => {
+    signIn: async (email, password, cb) => {
       let errorMessage = "";
 
       set((store) => ({
@@ -23,7 +23,6 @@ const useAuth = create((set) => {
       try {
         const response = await axios.post('https://leptons-cbs-dnkfu.ondigitalocean.app/api/v1/staff/login/', {
             email,
-            username,
             password
           });
     
