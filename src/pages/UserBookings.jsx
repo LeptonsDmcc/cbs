@@ -194,7 +194,7 @@ const UserBookings = () => {
                     className={`px-2 py-1 rounded-full text-white ${
                       booking.status === 'approved'
                         ? 'bg-green-500'
-                        : booking.status === 'not approved'
+                        : booking.status === 'cancelled'
                         ? 'bg-red-500'
                         : 'bg-yellow-500'
                     }`}

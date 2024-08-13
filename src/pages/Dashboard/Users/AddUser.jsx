@@ -228,7 +228,7 @@
 
 // export default AddUser;
 
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import baseURL from '../../../services/apiClient';
 import { IoArrowBackCircleOutline } from "react-icons/io5";
@@ -236,9 +236,26 @@ import { useNavigate } from 'react-router-dom';
 
 const AddUser = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [departments, setDepartments] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { handleSubmit, register, watch } = useForm();
+
+  // Fetch departments on component mount
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const res = await fetch(`${baseURL}/api/v1/departments/`);
+        const data = await res.json();
+        setDepartments(data); // Assuming data is an array of department objects with 'id' and 'name'
+      } catch (error) {
+        console.error("Failed to fetch departments", error);
+      }
+    };
+
+    fetchDepartments();
+  }, []);
+
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
@@ -250,7 +267,7 @@ const AddUser = () => {
         last_name: data.last_name,
         phone: data.phone,
         is_driver: data.is_driver,
-        department: data.department
+        department: data.department // This will be the department name
       };
 
       const headers = {
@@ -264,11 +281,10 @@ const AddUser = () => {
       });
 
       const resData = await res.json();
-
       console.log("RES-DATA", resData);
       setIsLoading(false);
     } catch (error) {
-      console.log("ERROR", error);
+      console.error("ERROR", error);
       setIsLoading(false);
     }
   };
@@ -282,6 +298,7 @@ const AddUser = () => {
   };
 
   const password = watch('password');
+console.log("D",departments)
 
   return (
     <div className="relative min-h-screen p-8 items-center max-w-lg mx-auto m-8 bg-gray-100 rounded-lg mt-26">
@@ -336,7 +353,12 @@ const AddUser = () => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Department</label>
-            <input {...register("department", { required: true })} id="department" name="department" type="text" className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" />
+            <select {...register("department", { required: true })} id="department" name="department" className="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+              <option value="">Select Department</option>
+              {departments && departments.results && departments.results.length && departments.results.map(departments => (
+                <option key={departments.id} value={departments.id}>{departments.name}</option>
+              ))}
+            </select>
           </div>
           <div className="flex justify-center">
             <button disabled={isLoading} type="submit" className="bg-gray-800 hover:bg-[#a8cf45] text-white font-bold py-2 px-4 rounded">{isLoading ? "Loading..." : "Submit"}</button>
@@ -348,4 +370,3 @@ const AddUser = () => {
 };
 
 export default AddUser;
-

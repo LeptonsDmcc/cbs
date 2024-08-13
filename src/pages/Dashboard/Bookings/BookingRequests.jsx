@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useTrip from '../../../hooks/useTrip';
 import baseURL from '../../../services/apiClient';
 import useAuth from '../../../hooks/auth/store';
@@ -36,10 +36,10 @@ const BookingRequests = () => {
       <div className="shadow-lg p-6 bg-white rounded-lg mb-6">
         <h3 className="text-xl font-semibold mb-4">Trip Information</h3>
         <div className="mb-4">
-          <strong>Car:</strong> {trip.vehicle}
+          <strong>Car:</strong><VehicleName VehicleId= {trip.vehicle}/>
         </div>
         <div className="mb-4">
-          <strong>User:</strong> {trip.staff}
+          <strong>User:</strong><StaffName staffId= {trip.staff}/>
         </div>
         <div className="mb-4">
           <strong>Destinations:</strong>
@@ -89,3 +89,61 @@ const BookingRequests = () => {
 };
 
 export default BookingRequests;
+const StaffName = ({ staffId }) => {
+  const [staff, setStaff] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        const response = await fetch(`${baseURL}/api/v1/manage/staff/${staffId}/`, {
+          headers: {
+            "Authorization": `Bearer ${user.access}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch staff');
+        }
+        const staffData = await response.json();
+        setStaff(staffData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (staffId) {
+      fetchStaff();
+    }
+  }, [staffId, user.access]);
+
+  if (loading) {
+    return <td>Loading...</td>;
+  }
+
+  if (error) {
+    return <td>Error loading staff</td>;
+  }
+
+  return <td>{staff ? staff.first_name: 'No staff'}</td>;
+};
+const VehicleName = ({ vehicleId }) => {
+  const [vehicle, setVehicle] = useState();
+  useEffect(() => {
+    const fetchVehicle = async () => {
+      const response = await fetch(`${baseURL}/api/v1/vehicles/${vehicleId}/`);
+      const vehicleData = await response.json();
+      setVehicle(vehicleData);
+    };
+    fetchVehicle();
+  }, [vehicleId]);
+
+  return <td>{vehicle ? vehicle.make: 'No car'}</td>;
+};
+  
+
+

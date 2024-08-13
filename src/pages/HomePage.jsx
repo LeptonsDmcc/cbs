@@ -454,8 +454,52 @@ const HomePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submittedData, setSubmittedData] = useState(null);
   const { user } = useAuth();
+  const [errorMessage, setErrorMessage] = useState("");
+  
+
+  const carAlreadyBookedError = "This car has already been booked for the selected time. Please choose a different time or select another vehicle.";
+  const startTimeInPastError = "The start time cannot be in the past. Please select a valid start time.";
+
+  const checkIfCarIsBooked = async (vehicleId, startTime, endTime) => {
+    // Placeholder function to check if the car is booked
+    // Replace with actual API call to check availability
+    const response = await fetch(`https://leptons-cbs-dnkfu.ondigitalocean.app/api/v1/trips/check-booking`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ vehicle: vehicleId, start_time: startTime, end_time: endTime })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      return result.isBooked; // Assumes API returns a boolean for 'isBooked'
+    } else {
+      return false;
+    }
+  };
 
   const onSubmit = async (data) => {
+    const startTime = new Date(`${data.date}T${data.start_time}`);
+    const endTime = new Date(`${data.date}T${data.end_time}`);
+    const currentTime = new Date();
+
+    // if (startTime < currentTime) {
+    //   alert(startTimeInPastError);
+    //   return;
+    // }
+    
+    if (startTime < currentTime) {
+      setErrorMessage(startTimeInPastError);
+      return;
+    }
+
+    const isCarBooked = await checkIfCarIsBooked(data.vehicle, startTime, endTime);
+    if (isCarBooked) {
+      setErrorMessage(carAlreadyBookedError);
+      return;
+    }
+
     const newData = {
       "date": data.date,
       "start_time": data.start_time,
@@ -467,7 +511,7 @@ const HomePage = () => {
       "destinations": [{
         "address": data.address,
         "mission": data.mission,
-        "visit_duration": "1:00" // Adjust this value as needed
+        "visit_duration": "1:00"
       }]
     };
 
@@ -484,9 +528,9 @@ const HomePage = () => {
       }
       const resData = await response.json();
       setSubmittedData(resData);
-      setIsModalOpen(true); // Open the modal upon successful submission
+      setIsModalOpen(true);
       addRequest(resData);
-      setSelectedRequest(resData);  // Set the newly added request as the selected request
+      setSelectedRequest(resData);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -551,7 +595,7 @@ const HomePage = () => {
           </table>
         </ul>
       </div>
-
+      {errorMessage && <p className='tec'>{errorMessage}</p>}
       <div className="w-full lg:w-[60%] bg-[#dbded4] mx-auto mt-6 mb-[40px] p-6 rounded-lg shadow-xl transform hover:scale-105 transition duration-300 ease-in-out">
         <div>
           <div className="mb-4 flex flex-col sm:flex-row lg:flex-row gap-6 items-center">
@@ -569,25 +613,24 @@ const HomePage = () => {
             </div>
           </div>
 
-          <div className="flex-grow">
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700">Destination</label>
-            <input {...register("address")} type="text" id="destinations" name="address" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none shadow-lg focus:ring-2 focus:ring-blue-500 font-bold text-gray-600" />
+          <div className="mb-4">
+            <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
+            <input {...register("address")} type="text" id="address" name="address" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-gray-600" />
           </div>
-
           <div className="mb-4">
             <label htmlFor="mission" className="block text-sm font-medium text-gray-700">Mission</label>
-            <textarea {...register("mission", { required: true })} id="mission" name="mission" rows="2" className="px-4 py-2 mt-1 block w-full rounded-md border-gray-700 shadow-lg focus:border-green-500 focus:ring focus:ring-green-200 focus:ring-opacity-50"></textarea>
+            <textarea {...register("mission")} id="mission" name="mission" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold text-gray-600" />
           </div>
+        </div>
 
-          <div className="flex justify-end">
-            <button type="submit" className="bg-gray-800 hover:bg-[#a8cf45] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
-              Request Booking
-            </button>
-          </div>
+        <div className="flex justify-center">
+          <button type="submit" className="px-6 py-3 bg-[#a8cf45] text-gray-800 font-bold rounded-md shadow-lg transform hover:scale-105 transition duration-300 ease-in-out">
+            Request Booking
+          </button>
         </div>
       </div>
 
-      <SubmissionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+     <SubmissionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <h3 className="text-2xl font-bold">Booking Request Submitted</h3>
         <p>Your booking request has been successfully submitted.</p>
         <div className="mt-4">
@@ -600,6 +643,7 @@ const HomePage = () => {
         </div>
       </SubmissionModal>
     </form>
+    
   );
 };
 

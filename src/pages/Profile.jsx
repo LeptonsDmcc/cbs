@@ -1,5 +1,7 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
 import useAuth from "../hooks/auth/store";
+import baseURL from '../services/apiClient';
 
 const Profile = () => {
   // Sample data for the profile
@@ -35,7 +37,7 @@ const Profile = () => {
           <div>
             <label className="block text-gray-700 font-semibold mb-2">Department</label>
             <div className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100">
-              {profileData.department}
+            <DepartmentName departmentId={profileData.department} />
             </div>
           </div>
           <div>
@@ -57,3 +59,42 @@ const Profile = () => {
 };
 
 export default Profile;
+const DepartmentName = ({ departmentId }) => {
+  const [department, setDepartment] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDepartment = async () => {
+      try {
+        const response = await fetch(`${baseURL}/api/v1/departments/${departmentId}/`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch department');
+        }
+        const departmentData = await response.json();
+        setDepartment(departmentData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (departmentId) {
+      fetchDepartment();
+    }
+  }, [departmentId]);
+
+  if (loading) {
+    return <td>Loading...</td>;
+  }
+
+  if (error) {
+    return <td>Error loading department</td>;
+  }
+
+  return (
+    <td>{department ? department.name : 'No Department'}</td>
+  );
+};
+

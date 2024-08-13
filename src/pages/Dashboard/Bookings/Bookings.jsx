@@ -344,6 +344,7 @@ import { MdDateRange } from 'react-icons/md';
 import { useEffect, useState } from 'react';
 import useTrips from '../../../hooks/useTrips';
 import baseURL from '../../../services/apiClient';
+import useAuth from '../../../hooks/auth/store';
 
 const Bookings = () => {
   const [searchParams] = useSearchParams();
@@ -431,9 +432,9 @@ const Bookings = () => {
                 >
                   <VehicleImage vehicleId={trip.vehicle} />
                   <td>
-                    {trip.staff.split('-')[4].toUpperCase()}
-                    <br />
-                    <div className="text-gray-400">{trip.department}</div>
+                    <StaffName staffId={trip.staff} />
+                    
+                    
                   </td>
                   <td>{trip.destinations[0].address}</td>
                   <td className="text-gray-400">{trip.start_time} - {trip.end_time}</td>
@@ -467,8 +468,9 @@ const Pagination = ({ tripsPerPage, totalTrips, paginate }) => {
         {pageNumbers.map((number) => (
           <li key={number} className="px-3 py-1 mx-1 border rounded-lg bg-gray-200 cursor-pointer hover:bg-gray-300">
             <Link
-            to={`?page=${number}`}
-            onClick={() => paginate(number)}>
+              to={`?page=${number}`}
+              onClick={() => paginate(number)}
+            >
               {number}
             </Link>
           </li>
@@ -498,4 +500,46 @@ const VehicleImage = ({ vehicleId }) => {
   );
 };
 
+const StaffName = ({ staffId }) => {
+  const [staff, setStaff] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const fetchStaff = async () => {
+      try {
+        const response = await fetch(`${baseURL}/api/v1/manage/staff/${staffId}/`, {
+          headers: {
+            "Authorization": `Bearer ${user.access}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch staff');
+        }
+        const staffData = await response.json();
+        setStaff(staffData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (staffId) {
+      fetchStaff();
+    }
+  }, [staffId, user.access]);
+
+  if (loading) {
+    return <td>Loading...</td>;
+  }
+
+  if (error) {
+    return <td>Error loading staff</td>;
+  }
+
+  return <td>{staff ? staff.first_name : 'No staff'}</td>;
+};
 

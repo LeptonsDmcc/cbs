@@ -32,9 +32,18 @@ const UserDetails = () => {
   useEffect(() => {
     setIsLoading(true)
      const fetchStaff = async () => {
-       const res = await fetch(`${baseURL}/api/v1/manage/staff/${staffId}/`)
+       const res = await fetch(`${baseURL}/api/v1/manage/staff/${staffId}/`,
+        {
+          headers: {
+            "Authorization": `Bearer ${user.access}`,
+            "Content-Type": "application/json"
+        },
+        }
+       )
+       
        if (res.ok) { 
         const data = await res.json();
+        
         // console.log("Staff: ", data)
         setStaff(data)
         }else{
@@ -56,7 +65,7 @@ const UserDetails = () => {
       </div>
     );
   }
-
+  console.log("STAFF", staff)
   if (!staff) {
     return <p>User not found</p>;
   }
@@ -85,7 +94,7 @@ const UserDetails = () => {
             <p><span className="font-semibold">FullName:</span> {staff.first_name} {staff.last_name}</p>
             <p><span className="font-semibold">Username:</span> {staff.username}</p>
             <p><span className="font-semibold">Email:</span> {staff.email}</p>
-            <p><span className="font-semibold">Department:</span> {staff.department}</p>
+            <p><span className="font-semibold">Department: <DepartmentName departmentId={(staff.department)}/></span></p>
             <p><span className="font-semibold">Phone Number:</span> {staff.phone_number}</p>
           </div>
         </div>
@@ -95,3 +104,41 @@ const UserDetails = () => {
 };
 
 export default UserDetails;
+const DepartmentName = ({ departmentId }) => {
+  const [department, setDepartment] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchDepartment = async () => {
+      try {
+        const response = await fetch(`${baseURL}/api/v1/departments/${departmentId}/`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch department');
+        }
+        const departmentData = await response.json();
+        setDepartment(departmentData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (departmentId) {
+      fetchDepartment();
+    }
+  }, [departmentId]);
+
+  if (loading) {
+    return <td>Loading...</td>;
+  }
+
+  if (error) {
+    return <td>Error loading department</td>;
+  }
+
+  return (
+    <td>{department ? department.name : 'No Department'}</td>
+  );
+};
